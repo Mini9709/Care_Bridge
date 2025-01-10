@@ -24,7 +24,7 @@ public class BoardServiceImpl implements BoardService{
     // 보드 생성
     public BoardCreateResponseDto createBoard(Long userId, BoardCreateRequestDto dto) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ExceptionType.USER_NOT_FOUND));
+        User user = userRepository.findByIdOrElseThrow(userId);
 
         Board board = Board.builder()
                 .title(dto.getTitle())
@@ -39,7 +39,7 @@ public class BoardServiceImpl implements BoardService{
                 .title(board.getTitle())
                 .content(board.getContent())
                 .tag(board.getTag())
-                .views(board.getViews())
+                .views(0L)
                 .createdAt(board.getCreatedAt())
                 .modifiedAt(board.getModifiedAt())
                 .build();
@@ -61,11 +61,7 @@ public class BoardServiceImpl implements BoardService{
 
     // 보드 수정
     public BoardUpdateResponseDto updateBoardById(Long userId, Long boardId, BoardUpdateRequestDto dto) {
-        Board board = boardRepository.findByIdOrElseThrow(boardId);
-
-        if(!board.getUser().getId().equals(userId)){
-            throw new ForbiddenException(ExceptionType.FORBIDDEN_ACTION);
-        }
+        Board board = boardRepository.findByIdOrElseThrowAndCheckUserId(boardId, userId);
 
         board.updateBoard(dto.getTitle(), dto.getContent(), dto.getTag());
 
@@ -84,11 +80,7 @@ public class BoardServiceImpl implements BoardService{
 
     // 보드 삭제
     public BoardDeleteResponseDto deleteBoardById(Long userId, Long boardId) {
-        Board board = boardRepository.findByIdOrElseThrow(boardId);
-
-        if(!board.getUser().getId().equals(userId)){
-            throw new ForbiddenException(ExceptionType.FORBIDDEN_ACTION);
-        }
+        Board board = boardRepository.findByIdOrElseThrowAndCheckUserId(boardId, userId);
 
         boardRepository.delete(board);
 

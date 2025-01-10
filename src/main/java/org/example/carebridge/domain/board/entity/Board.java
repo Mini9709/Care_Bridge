@@ -17,13 +17,13 @@ public class Board extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(nullable = false)
+    @Column(nullable = false)
     private String title;
-    @JoinColumn(nullable = false)
+    @Column(nullable = false)
     private String content;
-    @JoinColumn(nullable = false)
+    @Column(nullable = false)
     private String tag;
-    @JoinColumn(nullable = false, columnDefinition = "BIGINT default 0")
+    @Column(nullable = false, columnDefinition = "BIGINT default 0")
     private Long views;
 
     @ManyToOne
@@ -33,10 +33,11 @@ public class Board extends BaseEntity {
     public Board() {}
 
     @Builder
-    public Board(String title, String content, String tag, User user) {
+    public Board(String title, String content, String tag, Long views, User user) {
         this.title = title;
         this.content = content;
         this.tag = tag;
+        this.views = views;
         this.user = user;
     }
 
